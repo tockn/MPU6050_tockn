@@ -37,58 +37,6 @@ byte MPU6050::readMPU6050(byte reg) {
 	return data;
 }
 
-int16_t MPU6050::getRawAccX(){
-	return rawAccX;
-}
-
-int16_t MPU6050::getRawAccY(){
-	return rawAccY;
-}
-
-int16_t MPU6050::getRawAccZ(){
-	return rawAccZ;
-}
-
-int16_t MPU6050::getRawGyroX(){
-	return rawGyroX;
-}
-
-int16_t MPU6050::getRawGyroY(){
-	return rawGyroY;
-}
-
-int16_t MPU6050::getRawGyroZ(){
-	return rawGyroZ;
-}
-
-float MPU6050::getTemp(){
-	return temp;
-}
-
-float MPU6050::getAccX(){
-	return accX;
-}
-
-float MPU6050::getAccY(){
-	return accY;
-}
-
-float MPU6050::getAccZ(){
-	return accZ;
-}
-
-float MPU6050::getGyroX(){
-	return gyroX;
-}
-
-float MPU6050::getGyroY(){
-	return gyroY;
-}
-
-float MPU6050::getGyroZ(){
-	return gyroZ;
-}
-
 void MPU6050::calcGyroOffsets(bool console){
 	float x = 0, y = 0, z = 0;
 	int16_t rx, ry, rz;
@@ -130,18 +78,6 @@ void MPU6050::calcGyroOffsets(bool console){
 		Serial.print("Program will start after 3 seconds");
 		delay(3000);
 	}
-}
-
-float MPU6050::getGyroXoffset(){
-	return gyroXoffset;
-}
-
-float MPU6050::getGyroYoffset(){
-	return gyroYoffset;
-}
-
-float MPU6050::getGyroZoffset(){
-	return gyroZoffset;
 }
 
 void MPU6050::update(){

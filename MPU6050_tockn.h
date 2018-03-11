@@ -25,31 +25,31 @@ class MPU6050{
 	void writeMPU6050(byte reg, byte data);
 	byte readMPU6050(byte reg);
 
-	int16_t getRawAccX();
-	int16_t getRawAccY();
-	int16_t getRawAccZ();
+	int16_t getRawAccX(){ return rawAccX; };
+	int16_t getRawAccY(){ return rawAccY; };
+	int16_t getRawAccZ(){ return rawAccZ; };
 
-	int16_t getRawTemp();
+	int16_t getRawTemp(){ return rawTemp; };
 
-	int16_t getRawGyroX();
-	int16_t getRawGyroY();
-	int16_t getRawGyroZ();
+	int16_t getRawGyroX(){ return rawGyroX; };
+	int16_t getRawGyroY(){ return rawGyroY; };
+	int16_t getRawGyroZ(){ return rawGyroZ; };
 
-	float getTemp();
+	float getTemp(){ return temp; };
 
-	float getAccX();
-	float getAccY();
-	float getAccZ();
+	float getAccX(){ return accX; };
+	float getAccY(){ return accY; };
+	float getAccZ(){ return accZ; };
 
-	float getGyroX();
-	float getGyroY();
-	float getGyroZ();
+	float getGyroX(){ return gyroX; };
+	float getGyroY(){ return gyroY; };
+	float getGyroZ(){ return gyroZ; };
 
 	void calcGyroOffsets(bool console = false);
 	
-	float getGyroXoffset();
-	float getGyroYoffset();
-	float getGyroZoffset();
+	float getGyroXoffset(){ return gyroXoffset; };
+	float getGyroYoffset(){ return gyroYoffset; };
+	float getGyroZoffset(){ return gyroZoffset; };
 
 	void update();
 

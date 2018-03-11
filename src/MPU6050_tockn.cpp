@@ -18,6 +18,9 @@ void MPU6050::begin(){
 	writeMPU6050(MPU6050_GYRO_CONFIG, 0x08);
 	writeMPU6050(MPU6050_ACCEL_CONFIG, 0x00);
 	writeMPU6050(MPU6050_PWR_MGMT_1, 0x01);
+	this.update();
+	startX = this.getAccAngleX();
+	startY = this.getAccAngleY();
 }
 
 void MPU6050::writeMPU6050(byte reg, byte data){
@@ -116,6 +119,9 @@ void MPU6050::update(){
 	angleGyroX += gyroX * (interval * 0.001);
 	angleGyroY += gyroY * (interval * 0.001);
 	angleGyroZ += gyroZ * (interval * 0.001);
+	
+	angleGyroX += startX;
+	angleGyroY += startY;
 
 	preInterval = millis();
 

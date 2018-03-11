@@ -83,7 +83,6 @@ class MPU6050{
 	long interval, preInterval;
 	
 	float accCoef, gyroCoef;
-	float startX, startY;
 };
 
 #endif

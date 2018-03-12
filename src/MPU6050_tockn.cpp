@@ -4,12 +4,8 @@
 MPU6050::MPU6050(TwoWire &w, float accCoef, float gyroCoef){
 	wire = &w;
 	
-	accCoef = coef1;
-	gyroCoef = coef2;
-
-	gyroXoffset = gyroOffset1;
-	gyroYoffset = gyroOffset2;
-	gyroZoffset = gyroOffset3;
+	accCoef = accCoef;
+	gyroCoef = gyroCoef;
 }
 
 void MPU6050::begin(){

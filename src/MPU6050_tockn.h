@@ -18,9 +18,11 @@
 class MPU6050{
 	public:
 
-	MPU6050(TwoWire &w, float coef1 = 0.98, float coef2 = 0.02, float gyroOffset1 = 0, float gyroOffset2 = 0, float gyroOffset3 = 0);
+	MPU6050(TwoWire &w, float AccCoef = 0.98, float gyroCoef = 0.02);
 
 	void begin();
+
+	void setGyroOffsets(float x, float y, float z);
 
 	void writeMPU6050(byte reg, byte data);
 	byte readMPU6050(byte reg);

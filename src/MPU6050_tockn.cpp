@@ -40,6 +40,12 @@ byte MPU6050::readMPU6050(byte reg) {
 	return data;
 }
 
+void MPU6050::setGyroOffsets(float x, float y, float z){
+	gyroXoffset = x;
+	gyroYoffset = y;
+	gyroZoffset = z;
+}
+
 void MPU6050::calcGyroOffsets(bool console){
 	float x = 0, y = 0, z = 0;
 	int16_t rx, ry, rz;

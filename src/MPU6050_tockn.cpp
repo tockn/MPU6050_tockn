@@ -1,7 +1,7 @@
 #include "MPU6050_tockn.h"
 #include "Arduino.h"
 
-MPU6050::MPU6050(TwoWire &w, float coef1, float coef2, float gyroOffset1, float gyroOffset2, float gyroOffset3){
+MPU6050::MPU6050(TwoWire &w, float accCoef, float gyroCoef){
 	wire = &w;
 	
 	accCoef = coef1;

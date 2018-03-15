@@ -12,7 +12,7 @@ Those two coefficients determined by constructor.
 Default coefficient of accelerometer is 0.02, gyroscope is 0.98.  
 `filtered_angle = (0.02 * accel) + (0.98 * gyro)`  
 #### example
-If you want to set 0.1 to accelerometer coefficient and 0.9 to accelerometer coefficient, your code is  
+If you want to set 0.1 to accelerometer coefficient and 0.9 to gyroscope coefficient, your code is  
 ```MPU6050 mpu6050(Wire, 0.1, 0.9);```  
 
 

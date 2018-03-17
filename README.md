@@ -17,7 +17,7 @@ If you want to set 0.1 to accelerometer coefficient and 0.9 to gyroscope coeffic
 
 
 ### Auto calibration
-If you use `calcGyroOffsets()` in function of setup, it will calculate calibration of the gyroscope, and the value of the gyroscope will calibrated.  
+If you use `calcGyroOffsets()` in `setup()`, it will calculate calibration of the gyroscope, and the value of the gyroscope will calibrated.  
 ⚠DO NOT MOVE MPU6050 during calculating.⚠  
 ```
 #include <MPU6050_tockn>
@@ -33,7 +33,7 @@ void setup(){
 
 ```
 
-If you use `calcGyroOffsets(true)` in function of setup, you can see state of calculating calibration in serial monitor.  
+If you use `calcGyroOffsets(true)` in `setup()`, you can see state of calculating calibration in serial monitor.  
 ```
 #include <MPU6050_tockn>
 #include <Wire.h>

@@ -18,7 +18,8 @@
 class MPU6050{
 	public:
 
-	MPU6050(TwoWire &w, float accCoef = 0.98, float gyroCoef = 0.02);
+	MPU6050(TwoWire &w);
+	MPU6050(TwoWire &w, float accCoef, float gyroCoef);
 
 	void begin();
 

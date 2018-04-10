@@ -1,9 +1,14 @@
 #include "MPU6050_tockn.h"
 #include "Arduino.h"
 
-MPU6050::MPU6050(TwoWire &w, float accCoef, float gyroCoef){
+MPU6050::MPU6050(TwoWire &w){
 	wire = &w;
-	
+	accCoef = 0.02f;
+	gyroCoef = 0.98f;
+}
+
+MPU6050::MPU6050(TwoWire &w, float accCoef, float gyroCoef){
+	wire = &w;	
 	accCoef = accCoef;
 	gyroCoef = gyroCoef;
 }
@@ -17,6 +22,8 @@ void MPU6050::begin(){
 	this->update();
 	angleGyroX = this->getAccAngleX();
 	angleGyroY = this->getAccAngleY();
+	Serial.println(this->getAccAngleX());
+	Serial.println(this->getAccAngleY());
 }
 
 void MPU6050::writeMPU6050(byte reg, byte data){

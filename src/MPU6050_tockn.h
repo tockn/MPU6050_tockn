@@ -4,7 +4,6 @@
 #include "Arduino.h"
 #include "Wire.h"
 
-
 #define MPU6050_ADDR         0x68
 #define MPU6050_SMPLRT_DIV   0x19
 #define MPU6050_CONFIG       0x1a
@@ -19,7 +18,7 @@ class MPU6050{
 	public:
 
 	MPU6050(TwoWire &w);
-	MPU6050(TwoWire &w, float accCoef, float gyroCoef);
+	MPU6050(TwoWire &w, float aC, float gC);
 
 	void begin();
 

@@ -7,10 +7,10 @@ MPU6050::MPU6050(TwoWire &w){
 	gyroCoef = 0.98f;
 }
 
-MPU6050::MPU6050(TwoWire &w, float accCoef, float gyroCoef){
+MPU6050::MPU6050(TwoWire &w, float aC, float gC){
 	wire = &w;	
-	accCoef = accCoef;
-	gyroCoef = gyroCoef;
+	accCoef = aC;
+	gyroCoef = gC;
 }
 
 void MPU6050::begin(){
@@ -22,8 +22,9 @@ void MPU6050::begin(){
 	this->update();
 	angleGyroX = this->getAccAngleX();
 	angleGyroY = this->getAccAngleY();
-	Serial.println(this->getAccAngleX());
-	Serial.println(this->getAccAngleY());
+	Serial.println("=================");
+	Serial.println(accCoef);
+	Serial.println(gyroCoef);
 }
 
 void MPU6050::writeMPU6050(byte reg, byte data){

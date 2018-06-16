@@ -124,14 +124,14 @@ void MPU6050::update(){
 	gyroY -= gyroYoffset;
 	gyroZ -= gyroZoffset;
 
-	interval = millis() - preInterval;
+	interval = (millis() - preInterval) * 0.001;
 
-	angleGyroX += gyroX * (interval * 0.001);
-	angleGyroY += gyroY * (interval * 0.001);
-	angleGyroZ += gyroZ * (interval * 0.001);
+	angleGyroX += gyroX * interval;
+	angleGyroY += gyroY * interval;
+	angleGyroZ += gyroZ * interval;
 
-	angleX = (gyroCoef * (angleX : gyroX * (interval * 0.001))) + (accCoef * angleAccX);
-	angleY = (gyroCoef * (angleY + gyroY * (interval * 0.001))) + (accCoef * angleAccY);
+	angleX = (gyroCoef * (angleX + gyroX * interval)) + (accCoef * angleAccX);
+	angleY = (gyroCoef * (angleY + gyroY * interval)) + (accCoef * angleAccY);
 	angleZ = angleGyroZ;
 
 	preInterval = millis();

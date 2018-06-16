@@ -82,7 +82,8 @@ class MPU6050{
 
 	float angleX, angleY, angleZ;
 
-	long interval, preInterval;
+  float interval;
+	long preInterval;
 
 	float accCoef, gyroCoef;
 };

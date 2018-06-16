@@ -8,7 +8,7 @@ MPU6050::MPU6050(TwoWire &w){
 }
 
 MPU6050::MPU6050(TwoWire &w, float aC, float gC){
-	wire = &w;	
+	wire = &w;
 	accCoef = aC;
 	gyroCoef = gC;
 }
@@ -20,11 +20,11 @@ void MPU6050::begin(){
 	writeMPU6050(MPU6050_ACCEL_CONFIG, 0x00);
 	writeMPU6050(MPU6050_PWR_MGMT_1, 0x01);
 	this->update();
-	angleGyroX = this->getAccAngleX();
-	angleGyroY = this->getAccAngleY();
-	Serial.println("=================");
-	Serial.println(accCoef);
-	Serial.println(gyroCoef);
+	angleGyroX = 0;
+	angleGyroY = 0;
+  angleX = this->getAccAngleX();
+  angleY = this->getAccAngleY();
+  preInterval = millis();
 }
 
 void MPU6050::writeMPU6050(byte reg, byte data){
@@ -82,7 +82,7 @@ void MPU6050::calcGyroOffsets(bool console){
 	gyroXoffset = x / 5000;
 	gyroYoffset = y / 5000;
 	gyroZoffset = z / 5000;
-	
+
 	if(console){
 		Serial.println("Done!!!");
 		Serial.print("X : ");Serial.println(gyroXoffset);
@@ -98,7 +98,7 @@ void MPU6050::update(){
 	wire->write(0x3B);
 	wire->endTransmission(false);
 	wire->requestFrom((int)MPU6050_ADDR, 14, (int)true);
-	
+
 	rawAccX = wire->read() << 8 | wire->read();
 	rawAccY = wire->read() << 8 | wire->read();
 	rawAccZ = wire->read() << 8 | wire->read();
@@ -108,7 +108,7 @@ void MPU6050::update(){
 	rawGyroZ = wire->read() << 8 | wire->read();
 
 	temp = (rawTemp + 12412.0) / 340.0;
-	
+
 	accX = ((float)rawAccX) / 16384.0;
 	accY = ((float)rawAccY) / 16384.0;
 	accZ = ((float)rawAccZ) / 16384.0;
@@ -120,20 +120,21 @@ void MPU6050::update(){
 	gyroY = ((float)rawGyroY) / 65.5;
 	gyroZ = ((float)rawGyroZ) / 65.5;
 
-	interval = millis() - preInterval;
-
 	gyroX -= gyroXoffset;
 	gyroY -= gyroYoffset;
 	gyroZ -= gyroZoffset;
 
-	angleGyroX += gyroX * (interval * 0.001);
-	angleGyroY += gyroY * (interval * 0.001);
-	angleGyroZ += gyroZ * (interval * 0.001);
-	
+	interval = (millis() - preInterval) * 0.001;
+
+	angleGyroX += gyroX * interval;
+	angleGyroY += gyroY * interval;
+	angleGyroZ += gyroZ * interval;
+
+	angleX = (gyroCoef * (angleX + gyroX * interval)) + (accCoef * angleAccX);
+	angleY = (gyroCoef * (angleY + gyroY * interval)) + (accCoef * angleAccY);
+	angleZ = angleGyroZ;
+
 	preInterval = millis();
 
-	angleX = (gyroCoef * angleGyroX) + (accCoef * angleAccX);
-	angleY = (gyroCoef * angleGyroY) + (accCoef * angleAccY);
-	angleZ = angleGyroZ;
 }
 

@@ -20,8 +20,11 @@ void MPU6050::begin(){
 	writeMPU6050(MPU6050_ACCEL_CONFIG, 0x00);
 	writeMPU6050(MPU6050_PWR_MGMT_1, 0x01);
 	this->update();
-	angleGyroX = this->getAccAngleX();
-	angleGyroY = this->getAccAngleY();
+	angleGyroX = 0;
+	angleGyroY = 0;
+  angleX = this->getAccAngleX();
+  angleY = this->getAccAngleY();
+  preInterval = millis();
 }
 
 void MPU6050::writeMPU6050(byte reg, byte data){
@@ -117,20 +120,21 @@ void MPU6050::update(){
 	gyroY = ((float)rawGyroY) / 65.5;
 	gyroZ = ((float)rawGyroZ) / 65.5;
 
-	interval = millis() - preInterval;
-
 	gyroX -= gyroXoffset;
 	gyroY -= gyroYoffset;
 	gyroZ -= gyroZoffset;
+
+	interval = millis() - preInterval;
 
 	angleGyroX += gyroX * (interval * 0.001);
 	angleGyroY += gyroY * (interval * 0.001);
 	angleGyroZ += gyroZ * (interval * 0.001);
 
+	angleX = (gyroCoef * (angleX : gyroX * (interval * 0.001))) + (accCoef * angleAccX);
+	angleY = (gyroCoef * (angleY + gyroY * (interval * 0.001))) + (accCoef * angleAccY);
+	angleZ = angleGyroZ;
+
 	preInterval = millis();
 
-	angleX = (gyroCoef * angleGyroX) + (accCoef * angleAccX);
-	angleY = (gyroCoef * angleGyroY) + (accCoef * angleAccY);
-	angleZ = angleGyroZ;
 }
 

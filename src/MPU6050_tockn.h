@@ -48,7 +48,7 @@ class MPU6050{
 	float getGyroZ(){ return gyroZ; };
 
 	void calcGyroOffsets(bool console = false);
-	
+
 	float getGyroXoffset(){ return gyroXoffset; };
 	float getGyroYoffset(){ return gyroYoffset; };
 	float getGyroZoffset(){ return gyroZoffset; };
@@ -70,7 +70,7 @@ class MPU6050{
 
 	TwoWire *wire;
 
-	int16_t rawAccX, rawAccY, rawAccZ, rawTemp, 
+	int16_t rawAccX, rawAccY, rawAccZ, rawTemp,
 	rawGyroX, rawGyroY, rawGyroZ;
 
 	float gyroXoffset, gyroYoffset, gyroZoffset;
@@ -83,7 +83,7 @@ class MPU6050{
 	float angleX, angleY, angleZ;
 
 	long interval, preInterval;
-	
+
 	float accCoef, gyroCoef;
 };
 

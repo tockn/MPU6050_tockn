@@ -56,6 +56,8 @@ void MPU6050::calcGyroOffsets(bool console){
 
   delay(1000);
 	if(console){
+    Serial.println();
+    Serial.println("========================================");
 		Serial.println("calculate gyro offsets");
 		Serial.print("DO NOT MOVE A MPU6050");
 	}
@@ -85,11 +87,13 @@ void MPU6050::calcGyroOffsets(bool console){
 	gyroZoffset = z / 3000;
 
 	if(console){
+    Serial.println();
 		Serial.println("Done!!!");
 		Serial.print("X : ");Serial.println(gyroXoffset);
 		Serial.print("Y : ");Serial.println(gyroYoffset);
 		Serial.print("Z : ");Serial.println(gyroYoffset);
-		Serial.print("Program will start after 3 seconds");
+		Serial.println("Program will start after 3 seconds");
+    Serial.print("========================================");
 		delay(3000);
 	}
 }

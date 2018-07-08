@@ -13,12 +13,12 @@ void MPU6050::begin(){
 	
 	setAccelSensitivity(0);
 	setGyroSensitivity(0);
-	this->update();
+	update();
 	
-	angleGyroX = 0;
-	angleGyroY = 0;
-	angleX = this->getAccAngleX();
-	angleY = this->getAccAngleY();
+	angleGyroX = 0.0f;
+	angleGyroY = 0.0f;
+	angleX = 0.0f;
+	angleY = 0.0f;
 	preInterval = millis();
 }
 
@@ -124,16 +124,17 @@ void MPU6050::calcGyroOffsets(bool console){
 
 void MPU6050::update(void)
 {
-	float accX = getAccelX();
-	float accY = getAccelY();
-	float accZ = getAccelY();
+	double accX = getAccelX();
+	double accY = getAccelY();
+	double accZ = getAccelY();
 
-	angleAccX = atan2(accY, accZ + abs(accX)) * 360 / 2.0 / PI;
-	angleAccY = atan2(accX, accZ + abs(accY)) * 360 / -2.0 / PI;
+	double angleAccX = getAccelAngleX(accX, accY, accZ);
+	double angleAccY = getAccelAngleY(accX, accY, accZ);
+	double angleAccZ = getAccelAngleZ(accX, accY, accZ);
 
-	float gyroX = getGyroX();
-	float gyroY = getGyroY();
-	float gyroZ = getGyroZ();
+	double gyroX = getGyroX();
+	double gyroY = getGyroY();
+	double gyroZ = getGyroZ();
 
 	double interval = (millis() - preInterval) * 0.001;
 
@@ -143,7 +144,7 @@ void MPU6050::update(void)
 
 	angleX = (gyroCoef * (angleX + gyroX * interval)) + (accCoef * angleAccX);
 	angleY = (gyroCoef * (angleY + gyroY * interval)) + (accCoef * angleAccY);
-	angleZ = angleGyroZ;
+	angleZ = (gyroCoef * (angleZ + gyroZ * interval)) + (accCoef * angleAccZ);
 
 	preInterval = millis();
 }
@@ -152,7 +153,7 @@ void MPU6050::update(void)
 * A streamlined version of the MPU6050.update() method. Designed to be used in timer
 * interrupts where the delta t between the interrupts is precisely known.
 *
-* @param interval Delta t between timer interrupts
+* @param interval Delta t between timer interrupts (in sec)
 */
 void MPU6050::interruptUpdate (unsigned long interval)
 {
@@ -297,4 +298,19 @@ int16_t MPU6050::getGyroZ(void)
 int16_t MPU6050::getTemp(void)
 {
 	return (getRawTemp() + 12412.0f) / 340.0f;
+}
+
+double MPU6050::getAccelAngleX(double accelX, double accelY, double accelZ)
+{
+	return atan2(accelY, accelZ + abs(accelX)) * 180 / PI;
+}
+
+double MPU6050::getAccelAngleY(double accelX, double accelY, double accelZ)
+{
+	return atan2(accelX, accelZ + abs(accelY)) * -180 / PI;
+}
+
+double MPU6050::getAccelAngleZ(double accelX, double accelY, double accelZ)
+{
+	return atan2(accelY, accelX + abs(accelZ)) * 180 / PI;
 }

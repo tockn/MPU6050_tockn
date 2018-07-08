@@ -71,12 +71,9 @@ class MPU6050{
 	void update(void);
 	void interruptUpdate(unsigned long interval);
 
-	float getAccAngleX(){ return angleAccX; };
-	float getAccAngleY(){ return angleAccY; };
-
-	float getGyroAngleX(){ return angleGyroX; };
-	float getGyroAngleY(){ return angleGyroY; };
-	float getGyroAngleZ(){ return angleGyroZ; };
+	double getGyroAngleX(){ return angleGyroX; };
+	double getGyroAngleY(){ return angleGyroY; };
+	double getGyroAngleZ(){ return angleGyroZ; };
 
 	double getAngleX(){ return angleX; };
 	double getAngleY(){ return angleY; };
@@ -91,8 +88,7 @@ class MPU6050{
 	float accelSensitivity;
 	float gyroSensitivity;
 
-	float angleGyroX, angleGyroY, angleGyroZ,
-	angleAccX, angleAccY, angleAccZ;
+	double angleGyroX, angleGyroY, angleGyroZ;
 
 	double angleX, angleY, angleZ;
 
@@ -100,7 +96,11 @@ class MPU6050{
 
 	float accCoef, gyroCoef;
 	
-	void writeBits (uint8_t regAddress, uint8_t startBit, uint8_t length, byte data);
+	double getAccelAngleX(double accelX, double accelY, double accelZ);
+	double getAccelAngleY(double accelX, double accelY, double accelZ);
+	double getAccelAngleZ(double accelX, double accelY, double accelZ);
+	
+	void writeBits(uint8_t regAddress, uint8_t startBit, uint8_t length, byte data);
 	void writeMPU6050(uint8_t reg, byte data);
 	byte readMPU6050(uint8_t reg);
 	int16_t read2BytesMPU6050(uint8_t reg);

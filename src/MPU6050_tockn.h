@@ -26,15 +26,14 @@
 #define MPU6050_16G_ACCEL_SENSITIVITY 2048
 
 #define MPU6050_250DS_GYRO_SENSITIVITY 131
-#define MPU6050_500DS_GYRO_SENSITIVITY 65.5
-#define MPU6050_1000DS_GYRO_SENSITIVITY 32.8
-#define MPU6050_2000DS_GYRO_SENSITIVITY 16.4
+#define MPU6050_500DS_GYRO_SENSITIVITY 65.5f
+#define MPU6050_1000DS_GYRO_SENSITIVITY 32.8f
+#define MPU6050_2000DS_GYRO_SENSITIVITY 16.4f
 
 class MPU6050{
 	public:
-
-	MPU6050(TwoWire &w);
-	MPU6050(TwoWire &w, float aC, float gC);
+	
+	MPU6050(TwoWire &w, float aC = 0.02f, float gC = 0.98f);
 
 	void begin();
 
@@ -43,28 +42,25 @@ class MPU6050{
 	void setGyroSensitivity (uint8_t range);
 	void setAccelSensitivity (uint8_t range);
 
-	void writeMPU6050(byte reg, byte data);
-	byte readMPU6050(byte reg);
+	int16_t getRawAccelX(void);
+	int16_t getRawAccelY(void);
+	int16_t getRawAccelZ(void);
 
-	int16_t getRawAccX(){ return rawAccX; };
-	int16_t getRawAccY(){ return rawAccY; };
-	int16_t getRawAccZ(){ return rawAccZ; };
+	int16_t getRawTemp(void);
 
-	int16_t getRawTemp(){ return rawTemp; };
+	int16_t getRawGyroX(void);
+	int16_t getRawGyroY(void);
+	int16_t getRawGyroZ(void);
 
-	int16_t getRawGyroX(){ return rawGyroX; };
-	int16_t getRawGyroY(){ return rawGyroY; };
-	int16_t getRawGyroZ(){ return rawGyroZ; };
+	int16_t getTemp(void);
 
-	float getTemp(){ return temp; };
+	int16_t getAccelX(void);
+	int16_t getAccelY(void);
+	int16_t getAccelZ(void);
 
-	float getAccX(){ return accX; };
-	float getAccY(){ return accY; };
-	float getAccZ(){ return accZ; };
-
-	float getGyroX(){ return gyroX; };
-	float getGyroY(){ return gyroY; };
-	float getGyroZ(){ return gyroZ; };
+	int16_t getGyroX(void);
+	int16_t getGyroY(void);
+	int16_t getGyroZ(void);
 
 	void calcGyroOffsets(bool console = false);
 
@@ -72,7 +68,8 @@ class MPU6050{
 	float getGyroYoffset(){ return gyroYoffset; };
 	float getGyroZoffset(){ return gyroZoffset; };
 
-	void update();
+	void update(void);
+	void interruptUpdate(unsigned long interval);
 
 	float getAccAngleX(){ return angleAccX; };
 	float getAccAngleY(){ return angleAccY; };
@@ -81,35 +78,32 @@ class MPU6050{
 	float getGyroAngleY(){ return angleGyroY; };
 	float getGyroAngleZ(){ return angleGyroZ; };
 
-	float getAngleX(){ return angleX; };
-	float getAngleY(){ return angleY; };
-	float getAngleZ(){ return angleZ; };
+	double getAngleX(){ return angleX; };
+	double getAngleY(){ return angleY; };
+	double getAngleZ(){ return angleZ; };
 
 	private:
 
 	TwoWire *wire;
-
-	int16_t rawAccX, rawAccY, rawAccZ, rawTemp,
-	rawGyroX, rawGyroY, rawGyroZ;
 
 	float gyroXoffset, gyroYoffset, gyroZoffset;
 	
 	float accelSensitivity;
 	float gyroSensitivity;
 
-	float temp, accX, accY, accZ, gyroX, gyroY, gyroZ;
-
 	float angleGyroX, angleGyroY, angleGyroZ,
 	angleAccX, angleAccY, angleAccZ;
 
-	float angleX, angleY, angleZ;
+	double angleX, angleY, angleZ;
 
-    float interval;
-	long preInterval;
+	unsigned long preInterval;
 
 	float accCoef, gyroCoef;
 	
-	void writeBits (uint8_t regAddress, uint8_t startBit, uint8_t length, uint8_t data);
+	void writeBits (uint8_t regAddress, uint8_t startBit, uint8_t length, byte data);
+	void writeMPU6050(uint8_t reg, byte data);
+	byte readMPU6050(uint8_t reg);
+	int16_t read2BytesMPU6050(uint8_t reg);
 };
 
 #endif

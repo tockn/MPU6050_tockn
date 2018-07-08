@@ -1,11 +1,5 @@
 #include "MPU6050_tockn.h"
 
-MPU6050::MPU6050(TwoWire &w){
-	wire = &w;
-	accCoef = 0.02f;
-	gyroCoef = 0.98f;
-}
-
 MPU6050::MPU6050(TwoWire &w, float aC, float gC){
 	wire = &w;
 	accCoef = aC;
@@ -15,34 +9,71 @@ MPU6050::MPU6050(TwoWire &w, float aC, float gC){
 void MPU6050::begin(){
 	writeMPU6050(MPU6050_SMPLRT_DIV, 0x00);
 	writeMPU6050(MPU6050_CONFIG, 0x00);
-	writeMPU6050(MPU6050_GYRO_CONFIG, 0x08);
-	writeMPU6050(MPU6050_ACCEL_CONFIG, 0x00);
 	writeMPU6050(MPU6050_PWR_MGMT_1, 0x01);
+	
 	setAccelSensitivity(0);
 	setGyroSensitivity(0);
 	this->update();
+	
 	angleGyroX = 0;
 	angleGyroY = 0;
-  angleX = this->getAccAngleX();
-  angleY = this->getAccAngleY();
-  preInterval = millis();
+	angleX = this->getAccAngleX();
+	angleY = this->getAccAngleY();
+	preInterval = millis();
 }
 
-void MPU6050::writeMPU6050(byte reg, byte data){
+void MPU6050::writeMPU6050(uint8_t reg, byte data){
 	wire->beginTransmission(MPU6050_ADDR);
 	wire->write(reg);
 	wire->write(data);
 	wire->endTransmission();
 }
 
-byte MPU6050::readMPU6050(byte reg) {
+/**
+ *	Write bits to a specific register.
+ *
+ * @param regAddress Address of the register to write to
+ * @param startBit First bit position to write
+ * @param length Number of bits to write to
+ * @param data Value to write
+*/
+void MPU6050::writeBits(uint8_t regAddress, uint8_t startBit, uint8_t length, byte data)
+{
+	uint8_t b = readMPU6050(regAddress);
+
+	uint8_t mask = ((1 << length) - 1) << (startBit - length + 1);
+    data <<= (startBit - length + 1); // shift data into correct position
+    data &= mask; // zero all non-important bits in data
+    b &= ~(mask); // zero all important bits in existing byte
+    b |= data; // combine data with existing byte
+		
+	writeMPU6050(regAddress, b);
+}
+
+/**
+* Reads 1 byte for a specific register of the MPU6050.
+*
+* @param reg The register to read from
+*/
+byte MPU6050::readMPU6050(uint8_t reg) 
+{
 	wire->beginTransmission(MPU6050_ADDR);
 	wire->write(reg);
-	wire->endTransmission(true);
-	wire->requestFrom((uint8_t)MPU6050_ADDR, (size_t)2/*length*/);
-	byte data =  wire->read();
-	wire->read();
-	return data;
+	wire->endTransmission();
+	wire->requestFrom(MPU6050_ADDR, 1);
+	
+	return wire->read();
+}
+
+/**
+* Read two bytes from MPU6050. Reads the register specified and the one
+* after it.
+*
+* @param reg Register to read from
+*/
+int16_t MPU6050::read2BytesMPU6050(byte reg)
+{
+	return ((int16_t)readMPU6050(reg)) << 8 | readMPU6050(++reg);
 }
 
 void MPU6050::setGyroOffsets(float x, float y, float z){
@@ -66,22 +97,14 @@ void MPU6050::calcGyroOffsets(bool console){
 		if(console && i % 1000 == 0){
 			Serial.print(".");
 		}
-		wire->beginTransmission(MPU6050_ADDR);
-		wire->write(0x3B);
-		wire->endTransmission(false);
-		wire->requestFrom((int)MPU6050_ADDR, 14, (int)true);
 
-		wire->read() << 8 | wire->read();
-		wire->read() << 8 | wire->read();
-		wire->read() << 8 | wire->read();
-		wire->read() << 8 | wire->read();
-		rx = wire->read() << 8 | wire->read();
-		ry = wire->read() << 8 | wire->read();
-		rz = wire->read() << 8 | wire->read();
+		rx = getRawGyroX();
+		ry = getRawGyroY();
+		rz = getRawGyroZ();
 
-		x += ((float)rx) / gyroSensitivity;
-		y += ((float)ry) / gyroSensitivity;
-		z += ((float)rz) / gyroSensitivity;
+		x += rx / gyroSensitivity;
+		y += ry / gyroSensitivity;
+		z += rz / gyroSensitivity;
 	}
 	gyroXoffset = x / 3000;
 	gyroYoffset = y / 3000;
@@ -99,38 +122,20 @@ void MPU6050::calcGyroOffsets(bool console){
 	}
 }
 
-void MPU6050::update(){
-	wire->beginTransmission(MPU6050_ADDR);
-	wire->write(0x3B);
-	wire->endTransmission(false);
-	wire->requestFrom((int)MPU6050_ADDR, 14, (int)true);
-
-	rawAccX = wire->read() << 8 | wire->read();
-	rawAccY = wire->read() << 8 | wire->read();
-	rawAccZ = wire->read() << 8 | wire->read();
-	rawTemp = wire->read() << 8 | wire->read();
-	rawGyroX = wire->read() << 8 | wire->read();
-	rawGyroY = wire->read() << 8 | wire->read();
-	rawGyroZ = wire->read() << 8 | wire->read();
-
-	temp = (rawTemp + 12412.0) / 340.0;
-
-	accX = ((float)rawAccX) / accelSensitivity;
-	accY = ((float)rawAccY) / accelSensitivity;
-	accZ = ((float)rawAccZ) / accelSensitivity;
+void MPU6050::update(void)
+{
+	float accX = getAccelX();
+	float accY = getAccelY();
+	float accZ = getAccelY();
 
 	angleAccX = atan2(accY, accZ + abs(accX)) * 360 / 2.0 / PI;
 	angleAccY = atan2(accX, accZ + abs(accY)) * 360 / -2.0 / PI;
 
-	gyroX = ((float)rawGyroX) / gyroSensitivity;
-	gyroY = ((float)rawGyroY) / gyroSensitivity;
-	gyroZ = ((float)rawGyroZ) / gyroSensitivity;
+	float gyroX = getGyroX();
+	float gyroY = getGyroY();
+	float gyroZ = getGyroZ();
 
-	gyroX -= gyroXoffset;
-	gyroY -= gyroYoffset;
-	gyroZ -= gyroZoffset;
-
-	interval = (millis() - preInterval) * 0.001;
+	double interval = (millis() - preInterval) * 0.001;
 
 	angleGyroX += gyroX * interval;
 	angleGyroY += gyroY * interval;
@@ -141,28 +146,17 @@ void MPU6050::update(){
 	angleZ = angleGyroZ;
 
 	preInterval = millis();
-
 }
 
 /**
- *	Write bits to a specific register.
- *
- * @param regAddress Address of the register to write to
- * @param startBit First bit position to write
- * @param length Number of bits to write to
- * @param data Value to write
+* A streamlined version of the MPU6050.update() method. Designed to be used in timer
+* interrupts where the delta t between the interrupts is precisely known.
+*
+* @param interval Delta t between timer interrupts
 */
-void MPU6050::writeBits(uint8_t regAddress, uint8_t startBit, uint8_t length, uint8_t data)
+void MPU6050::interruptUpdate (unsigned long interval)
 {
-	uint8_t b = readMPU6050(regAddress);
-
-	uint8_t mask = ((1 << length) - 1) << (startBit - length + 1);
-    data <<= (startBit - length + 1); // shift data into correct position
-    data &= mask; // zero all non-important bits in data
-    b &= ~(mask); // zero all important bits in existing byte
-    b |= data; // combine data with existing byte
-		
-	writeMPU6050(regAddress, b);
+	
 }
 
 /** Set full-scale gyro range.
@@ -233,4 +227,74 @@ void MPU6050::setAccelSensitivity(uint8_t range)
 	}
 	
 	writeBits(MPU6050_ACCEL_CONFIG, MPU6050_ACCEL_CONFIG_FS_SEL_BIT, MPU6050_ACCEL_CONFIG_FS_SEL_LENGTH, range);
+}
+
+int16_t MPU6050::getRawAccelX(void)
+{
+	return read2BytesMPU6050(0x3B);
+}
+
+int16_t MPU6050::getRawAccelY(void)
+{
+	return read2BytesMPU6050(0x3D);
+}
+
+int16_t MPU6050::getRawAccelZ(void)
+{
+	return read2BytesMPU6050(0x3F);
+}
+
+int16_t MPU6050::getRawTemp(void)
+{
+	return read2BytesMPU6050(0x41);
+}
+
+int16_t MPU6050::getRawGyroX(void)
+{
+	return read2BytesMPU6050(0x43);
+}
+
+int16_t MPU6050::getRawGyroY(void)
+{
+	return read2BytesMPU6050(0x45);
+}
+
+int16_t MPU6050::getRawGyroZ(void)
+{
+	return read2BytesMPU6050(0x47);
+}
+
+int16_t MPU6050::getAccelX(void)
+{
+	return getRawAccelX() / accelSensitivity;
+}
+
+int16_t MPU6050::getAccelY(void)
+{
+	return getRawAccelY() / accelSensitivity;
+}
+
+int16_t MPU6050::getAccelZ(void)
+{
+	return getRawAccelZ() / accelSensitivity;
+}
+
+int16_t MPU6050::getGyroX(void)
+{
+	return (getRawGyroX() / gyroSensitivity) - gyroXoffset;
+}
+
+int16_t MPU6050::getGyroY(void)
+{
+	return (getRawGyroY() / gyroSensitivity) - gyroYoffset;
+}
+
+int16_t MPU6050::getGyroZ(void)
+{
+	return (getRawGyroZ() / gyroSensitivity) - gyroZoffset;
+}
+
+int16_t MPU6050::getTemp(void)
+{
+	return (getRawTemp() + 12412.0f) / 340.0f;
 }

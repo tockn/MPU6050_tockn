@@ -40,11 +40,11 @@ class MPU6050{
 	void setGyroOffsets(float x, float y, float z);
 	
 	void setGyroSensitivity (uint8_t range);
-	void setAccelSensitivity (uint8_t range);
+	void setAccSensitivity (uint8_t range);
 
-	int16_t getRawAccelX(void);
-	int16_t getRawAccelY(void);
-	int16_t getRawAccelZ(void);
+	int16_t getRawAccX(void);
+	int16_t getRawAccY(void);
+	int16_t getRawAccZ(void);
 
 	int16_t getRawTemp(void);
 
@@ -52,15 +52,15 @@ class MPU6050{
 	int16_t getRawGyroY(void);
 	int16_t getRawGyroZ(void);
 
-	int16_t getTemp(void);
+	double getTemp(void);
 
-	int16_t getAccelX(void);
-	int16_t getAccelY(void);
-	int16_t getAccelZ(void);
+	double getAccX(void);
+	double getAccY(void);
+	double getAccZ(void);
 
-	int16_t getGyroX(void);
-	int16_t getGyroY(void);
-	int16_t getGyroZ(void);
+	double getGyroX(void);
+	double getGyroY(void);
+	double getGyroZ(void);
 
 	void calcGyroOffsets(bool console = false);
 
@@ -85,7 +85,7 @@ class MPU6050{
 
 	float gyroXoffset, gyroYoffset, gyroZoffset;
 	
-	float accelSensitivity;
+	float accSensitivity;
 	float gyroSensitivity;
 
 	double angleGyroX, angleGyroY, angleGyroZ;
@@ -96,12 +96,9 @@ class MPU6050{
 
 	float accCoef, gyroCoef;
 	
-	double getAccelAngleX(double accelX, double accelY, double accelZ);
-	double getAccelAngleY(double accelX, double accelY, double accelZ);
-	double getAccelAngleZ(double accelX, double accelY, double accelZ);
-	
 	void writeBits(uint8_t regAddress, uint8_t startBit, uint8_t length, byte data);
 	void writeMPU6050(uint8_t reg, byte data);
+	
 	byte readMPU6050(uint8_t reg);
 	int16_t read2BytesMPU6050(uint8_t reg);
 };

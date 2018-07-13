@@ -11,7 +11,7 @@ void MPU6050::begin(){
 	writeMPU6050(MPU6050_CONFIG, 0x00);
 	writeMPU6050(MPU6050_PWR_MGMT_1, 0x01);
 	
-	setAccelSensitivity(0);
+	setAccSensitivity(0);
 	setGyroSensitivity(0);
 	update();
 	
@@ -97,14 +97,10 @@ void MPU6050::calcGyroOffsets(bool console){
 		if(console && i % 1000 == 0){
 			Serial.print(".");
 		}
-
-		rx = getRawGyroX();
-		ry = getRawGyroY();
-		rz = getRawGyroZ();
-
-		x += rx / gyroSensitivity;
-		y += ry / gyroSensitivity;
-		z += rz / gyroSensitivity;
+		
+		x += getGyroX();
+		y += getGyroY();
+		z += getGyroZ();
 	}
 	gyroXoffset = x / 3000;
 	gyroYoffset = y / 3000;
@@ -122,42 +118,45 @@ void MPU6050::calcGyroOffsets(bool console){
 	}
 }
 
+/**
+* Updates MPU6050's member variables.
+*
+* @see interruptUpdate
+*/
 void MPU6050::update(void)
 {
-	double accX = getAccelX();
-	double accY = getAccelY();
-	double accZ = getAccelY();
+	interruptUpdate(millis() - preInterval);
+	preInterval = millis();
+}
 
-	double angleAccX = getAccelAngleX(accX, accY, accZ);
-	double angleAccY = getAccelAngleY(accX, accY, accZ);
-	double angleAccZ = getAccelAngleZ(accX, accY, accZ);
+/**
+* Updates MPU6050's member variables. To be used in a timer interrupt, where
+* the time between method calls is known.
+*
+* @param interval Delta t between timer interrupts (in ms)
+*/
+void MPU6050::interruptUpdate(unsigned long interval)
+{
+	double accX = getAccX();
+	double accY = getAccY();
+	double accZ = getAccY();
+
+	double angleAccX = atan2(accY, accZ + abs(accX)) * 180 / PI;
+	double angleAccY = atan2(accX, accZ + abs(accY)) * -180 / PI;
 
 	double gyroX = getGyroX();
 	double gyroY = getGyroY();
 	double gyroZ = getGyroZ();
-
-	double interval = (millis() - preInterval) * 0.001;
-
+	
+	interval *= 0.001f;
+	
 	angleGyroX += gyroX * interval;
 	angleGyroY += gyroY * interval;
 	angleGyroZ += gyroZ * interval;
 
 	angleX = (gyroCoef * (angleX + gyroX * interval)) + (accCoef * angleAccX);
 	angleY = (gyroCoef * (angleY + gyroY * interval)) + (accCoef * angleAccY);
-	angleZ = (gyroCoef * (angleZ + gyroZ * interval)) + (accCoef * angleAccZ);
-
-	preInterval = millis();
-}
-
-/**
-* A streamlined version of the MPU6050.update() method. Designed to be used in timer
-* interrupts where the delta t between the interrupts is precisely known.
-*
-* @param interval Delta t between timer interrupts (in sec)
-*/
-void MPU6050::interruptUpdate (unsigned long interval)
-{
-	
+	angleZ = angleGyroZ;
 }
 
 /** Set full-scale gyro range.
@@ -203,24 +202,24 @@ void MPU6050::setGyroSensitivity(uint8_t range)
  *
  * @param range New accel sensitivity setting
  */
-void MPU6050::setAccelSensitivity(uint8_t range)
+void MPU6050::setAccSensitivity(uint8_t range)
 {
 	switch (range)
 	{
 		case 0:
-			accelSensitivity = MPU6050_2G_ACCEL_SENSITIVITY;
+			accSensitivity = MPU6050_2G_ACCEL_SENSITIVITY;
 			break;
 			
 		case 1:
-			accelSensitivity = MPU6050_4G_ACCEL_SENSITIVITY;
+			accSensitivity = MPU6050_4G_ACCEL_SENSITIVITY;
 			break;
 			
 		case 2:
-			accelSensitivity = MPU6050_8G_ACCEL_SENSITIVITY;
+			accSensitivity = MPU6050_8G_ACCEL_SENSITIVITY;
 			break;
 			
 		case 3:
-			accelSensitivity = MPU6050_16G_ACCEL_SENSITIVITY;
+			accSensitivity = MPU6050_16G_ACCEL_SENSITIVITY;
 			break;
 		
 		default:
@@ -230,17 +229,17 @@ void MPU6050::setAccelSensitivity(uint8_t range)
 	writeBits(MPU6050_ACCEL_CONFIG, MPU6050_ACCEL_CONFIG_FS_SEL_BIT, MPU6050_ACCEL_CONFIG_FS_SEL_LENGTH, range);
 }
 
-int16_t MPU6050::getRawAccelX(void)
+int16_t MPU6050::getRawAccX(void)
 {
 	return read2BytesMPU6050(0x3B);
 }
 
-int16_t MPU6050::getRawAccelY(void)
+int16_t MPU6050::getRawAccY(void)
 {
 	return read2BytesMPU6050(0x3D);
 }
 
-int16_t MPU6050::getRawAccelZ(void)
+int16_t MPU6050::getRawAccZ(void)
 {
 	return read2BytesMPU6050(0x3F);
 }
@@ -265,52 +264,37 @@ int16_t MPU6050::getRawGyroZ(void)
 	return read2BytesMPU6050(0x47);
 }
 
-int16_t MPU6050::getAccelX(void)
+double MPU6050::getAccX(void)
 {
-	return getRawAccelX() / accelSensitivity;
+	return getRawAccX() / accSensitivity;
 }
 
-int16_t MPU6050::getAccelY(void)
+double MPU6050::getAccY(void)
 {
-	return getRawAccelY() / accelSensitivity;
+	return getRawAccY() / accSensitivity;
 }
 
-int16_t MPU6050::getAccelZ(void)
+double MPU6050::getAccZ(void)
 {
-	return getRawAccelZ() / accelSensitivity;
+	return getRawAccZ() / accSensitivity;
 }
 
-int16_t MPU6050::getGyroX(void)
+double MPU6050::getGyroX(void)
 {
 	return (getRawGyroX() / gyroSensitivity) - gyroXoffset;
 }
 
-int16_t MPU6050::getGyroY(void)
+double MPU6050::getGyroY(void)
 {
 	return (getRawGyroY() / gyroSensitivity) - gyroYoffset;
 }
 
-int16_t MPU6050::getGyroZ(void)
+double MPU6050::getGyroZ(void)
 {
 	return (getRawGyroZ() / gyroSensitivity) - gyroZoffset;
 }
 
-int16_t MPU6050::getTemp(void)
+double MPU6050::getTemp(void)
 {
 	return (getRawTemp() + 12412.0f) / 340.0f;
-}
-
-double MPU6050::getAccelAngleX(double accelX, double accelY, double accelZ)
-{
-	return atan2(accelY, accelZ + abs(accelX)) * 180 / PI;
-}
-
-double MPU6050::getAccelAngleY(double accelX, double accelY, double accelZ)
-{
-	return atan2(accelX, accelZ + abs(accelY)) * -180 / PI;
-}
-
-double MPU6050::getAccelAngleZ(double accelX, double accelY, double accelZ)
-{
-	return atan2(accelY, accelX + abs(accelZ)) * 180 / PI;
 }

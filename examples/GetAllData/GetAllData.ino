@@ -1,4 +1,3 @@
-
 #include <MPU6050_tockn.h>
 #include <Wire.h>
 
@@ -27,10 +26,7 @@ void loop() {
     Serial.print("gyroX : ");Serial.print(mpu6050.getGyroX());
     Serial.print("\tgyroY : ");Serial.print(mpu6050.getGyroY());
     Serial.print("\tgyroZ : ");Serial.println(mpu6050.getGyroZ());
-  
-    Serial.print("accAngleX : ");Serial.print(mpu6050.getAccAngleX());
-    Serial.print("\taccAngleY : ");Serial.println(mpu6050.getAccAngleY());
-  
+    
     Serial.print("gyroAngleX : ");Serial.print(mpu6050.getGyroAngleX());
     Serial.print("\tgyroAngleY : ");Serial.print(mpu6050.getGyroAngleY());
     Serial.print("\tgyroAngleZ : ");Serial.println(mpu6050.getGyroAngleZ());

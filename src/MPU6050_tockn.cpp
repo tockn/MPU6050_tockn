@@ -52,7 +52,7 @@ void MPU6050::setGyroOffsets(float x, float y, float z){
 
 void MPU6050::calcGyroOffsets(bool console){
 	float x = 0, y = 0, z = 0;
-	int16_t rx, ry, rz;
+	int16_t rx, ry, rz, skip;
 
   delay(1000);
 	if(console){
@@ -70,10 +70,10 @@ void MPU6050::calcGyroOffsets(bool console){
 		wire->endTransmission(false);
 		wire->requestFrom((int)MPU6050_ADDR, 14, (int)true);
 
-		wire->read() << 8 | wire->read();
-		wire->read() << 8 | wire->read();
-		wire->read() << 8 | wire->read();
-		wire->read() << 8 | wire->read();
+		skip = wire->read() << 8 | wire->read();
+		skip = wire->read() << 8 | wire->read();
+		skip = wire->read() << 8 | wire->read();
+		skip = wire->read() << 8 | wire->read();
 		rx = wire->read() << 8 | wire->read();
 		ry = wire->read() << 8 | wire->read();
 		rz = wire->read() << 8 | wire->read();

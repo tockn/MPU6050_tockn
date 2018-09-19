@@ -57,8 +57,8 @@ void MPU6050::calcGyroOffsets(bool console){
   if(console){
     Serial.println();
     Serial.println("========================================");
-    Serial.println("calculate gyro offsets");
-    Serial.print("DO NOT MOVE A MPU6050");
+    Serial.println("Calculating gyro offsets");
+    Serial.print("DO NOT MOVE MPU6050");
   }
   for(int i = 0; i < 3000; i++){
     if(console && i % 1000 == 0){

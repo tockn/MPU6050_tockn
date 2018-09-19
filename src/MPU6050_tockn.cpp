@@ -38,9 +38,8 @@ byte MPU6050::readMPU6050(byte reg) {
   wire->beginTransmission(MPU6050_ADDR);
   wire->write(reg);
   wire->endTransmission(true);
-  wire->requestFrom((uint8_t)MPU6050_ADDR, (size_t)2/*length*/);
+  wire->requestFrom(MPU6050_ADDR, 1);
   byte data =  wire->read();
-  wire->read();
   return data;
 }
 
@@ -66,14 +65,10 @@ void MPU6050::calcGyroOffsets(bool console){
       Serial.print(".");
     }
     wire->beginTransmission(MPU6050_ADDR);
-    wire->write(0x3B);
+    wire->write(0x43);
     wire->endTransmission(false);
-    wire->requestFrom((int)MPU6050_ADDR, 14, (int)true);
+    wire->requestFrom((int)MPU6050_ADDR, 6, (int)true);
 
-    wire->read() << 8 | wire->read();
-    wire->read() << 8 | wire->read();
-    wire->read() << 8 | wire->read();
-    wire->read() << 8 | wire->read();
     rx = wire->read() << 8 | wire->read();
     ry = wire->read() << 8 | wire->read();
     rz = wire->read() << 8 | wire->read();

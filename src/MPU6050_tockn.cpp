@@ -50,11 +50,11 @@ void MPU6050::setGyroOffsets(float x, float y, float z){
 	gyroZoffset = z;
 }
 
-void MPU6050::calcGyroOffsets(bool console){
+void MPU6050::calcGyroOffsets(bool console, uint16_t delayBefore, uint16_t delayAfter){
 	float x = 0, y = 0, z = 0;
 	int16_t rx, ry, rz;
 
-  delay(1000);
+  delay(delayBefore);
 	if(console){
     Serial.println();
     Serial.println("========================================");
@@ -94,7 +94,7 @@ void MPU6050::calcGyroOffsets(bool console){
 		Serial.print("Z : ");Serial.println(gyroZoffset);
 		Serial.println("Program will start after 3 seconds");
     Serial.print("========================================");
-		delay(3000);
+		delay(delayAfter);
 	}
 }
 
@@ -142,4 +142,3 @@ void MPU6050::update(){
 	preInterval = millis();
 
 }
-

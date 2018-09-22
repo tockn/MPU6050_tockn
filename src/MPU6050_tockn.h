@@ -47,7 +47,7 @@ class MPU6050{
 	float getGyroY(){ return gyroY; };
 	float getGyroZ(){ return gyroZ; };
 
-	void calcGyroOffsets(bool console = false);
+	void calcGyroOffsets(bool console = false, uint16_t delayBefore = 1000, uint16_t delayAfter = 3000);
 
 	float getGyroXoffset(){ return gyroXoffset; };
 	float getGyroYoffset(){ return gyroYoffset; };

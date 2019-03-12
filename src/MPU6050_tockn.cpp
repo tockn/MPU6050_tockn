@@ -68,7 +68,7 @@ void MPU6050::calcGyroOffsets(bool console){
 		wire->beginTransmission(MPU6050_ADDR);
 		wire->write(0x3B);
 		wire->endTransmission(false);
-		wire->requestFrom((int)MPU6050_ADDR, 14, (int)true);
+		wire->requestFrom((int)MPU6050_ADDR, 14);
 
 		wire->read() << 8 | wire->read();
 		wire->read() << 8 | wire->read();
@@ -102,7 +102,7 @@ void MPU6050::update(){
 	wire->beginTransmission(MPU6050_ADDR);
 	wire->write(0x3B);
 	wire->endTransmission(false);
-	wire->requestFrom((int)MPU6050_ADDR, 14, (int)true);
+	wire->requestFrom((int)MPU6050_ADDR, 14);
 
 	rawAccX = wire->read() << 8 | wire->read();
 	rawAccY = wire->read() << 8 | wire->read();

@@ -15,77 +15,77 @@
 #define MPU6050_TEMP_L       0x42
 
 class MPU6050{
-	public:
+  public:
 
-	MPU6050(TwoWire &w);
-	MPU6050(TwoWire &w, float aC, float gC);
+  MPU6050(TwoWire &w);
+  MPU6050(TwoWire &w, float aC, float gC);
 
-	void begin();
+  void begin();
 
-	void setGyroOffsets(float x, float y, float z);
+  void setGyroOffsets(float x, float y, float z);
 
-	void writeMPU6050(byte reg, byte data);
-	byte readMPU6050(byte reg);
+  void writeMPU6050(byte reg, byte data);
+  byte readMPU6050(byte reg);
 
-	int16_t getRawAccX(){ return rawAccX; };
-	int16_t getRawAccY(){ return rawAccY; };
-	int16_t getRawAccZ(){ return rawAccZ; };
+  int16_t getRawAccX(){ return rawAccX; };
+  int16_t getRawAccY(){ return rawAccY; };
+  int16_t getRawAccZ(){ return rawAccZ; };
 
-	int16_t getRawTemp(){ return rawTemp; };
+  int16_t getRawTemp(){ return rawTemp; };
 
-	int16_t getRawGyroX(){ return rawGyroX; };
-	int16_t getRawGyroY(){ return rawGyroY; };
-	int16_t getRawGyroZ(){ return rawGyroZ; };
+  int16_t getRawGyroX(){ return rawGyroX; };
+  int16_t getRawGyroY(){ return rawGyroY; };
+  int16_t getRawGyroZ(){ return rawGyroZ; };
 
-	float getTemp(){ return temp; };
+  float getTemp(){ return temp; };
 
-	float getAccX(){ return accX; };
-	float getAccY(){ return accY; };
-	float getAccZ(){ return accZ; };
+  float getAccX(){ return accX; };
+  float getAccY(){ return accY; };
+  float getAccZ(){ return accZ; };
 
-	float getGyroX(){ return gyroX; };
-	float getGyroY(){ return gyroY; };
-	float getGyroZ(){ return gyroZ; };
+  float getGyroX(){ return gyroX; };
+  float getGyroY(){ return gyroY; };
+  float getGyroZ(){ return gyroZ; };
 
-	void calcGyroOffsets(bool console = false);
+  void calcGyroOffsets(bool console = false);
 
-	float getGyroXoffset(){ return gyroXoffset; };
-	float getGyroYoffset(){ return gyroYoffset; };
-	float getGyroZoffset(){ return gyroZoffset; };
+  float getGyroXoffset(){ return gyroXoffset; };
+  float getGyroYoffset(){ return gyroYoffset; };
+  float getGyroZoffset(){ return gyroZoffset; };
 
-	void update();
+  void update();
 
-	float getAccAngleX(){ return angleAccX; };
-	float getAccAngleY(){ return angleAccY; };
+  float getAccAngleX(){ return angleAccX; };
+  float getAccAngleY(){ return angleAccY; };
 
-	float getGyroAngleX(){ return angleGyroX; };
-	float getGyroAngleY(){ return angleGyroY; };
-	float getGyroAngleZ(){ return angleGyroZ; };
+  float getGyroAngleX(){ return angleGyroX; };
+  float getGyroAngleY(){ return angleGyroY; };
+  float getGyroAngleZ(){ return angleGyroZ; };
 
-	float getAngleX(){ return angleX; };
-	float getAngleY(){ return angleY; };
-	float getAngleZ(){ return angleZ; };
+  float getAngleX(){ return angleX; };
+  float getAngleY(){ return angleY; };
+  float getAngleZ(){ return angleZ; };
 
-	private:
+  private:
 
-	TwoWire *wire;
+  TwoWire *wire;
 
-	int16_t rawAccX, rawAccY, rawAccZ, rawTemp,
-	rawGyroX, rawGyroY, rawGyroZ;
+  int16_t rawAccX, rawAccY, rawAccZ, rawTemp,
+  rawGyroX, rawGyroY, rawGyroZ;
 
-	float gyroXoffset, gyroYoffset, gyroZoffset;
+  float gyroXoffset, gyroYoffset, gyroZoffset;
 
-	float temp, accX, accY, accZ, gyroX, gyroY, gyroZ;
+  float temp, accX, accY, accZ, gyroX, gyroY, gyroZ;
 
-	float angleGyroX, angleGyroY, angleGyroZ,
-	angleAccX, angleAccY, angleAccZ;
+  float angleGyroX, angleGyroY, angleGyroZ,
+  angleAccX, angleAccY, angleAccZ;
 
-	float angleX, angleY, angleZ;
+  float angleX, angleY, angleZ;
 
   float interval;
-	long preInterval;
+  long preInterval;
 
-	float accCoef, gyroCoef;
+  float accCoef, gyroCoef;
 };
 
 #endif

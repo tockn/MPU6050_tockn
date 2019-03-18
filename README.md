@@ -49,8 +49,8 @@ void setup(){
 ```
 Serial monitor:
 ```
-calculate gyro offsets
-DO NOT MOVE A MPU6050.....
+Calculate gyro offsets
+DO NOT MOVE MPU6050.....
 Done!!!
 X : 1.45
 Y : 1.23

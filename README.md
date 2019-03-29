@@ -77,4 +77,4 @@ void setup(){
 MIT
 ## Author
 
-[Tockn](https://github.com/tockn)
+[tockn](https://github.com/tockn)

@@ -51,7 +51,7 @@ Serial monitor:
 ```
 Calculate gyro offsets
 DO NOT MOVE MPU6050.....
-Done!!!
+Done!
 X : 1.45
 Y : 1.23
 Z : -1.32

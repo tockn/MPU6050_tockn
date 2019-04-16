@@ -83,7 +83,7 @@ void MPU6050::calcGyroOffsets(bool console, uint16_t delayBefore, uint16_t delay
 
   if(console){
     Serial.println();
-    Serial.println("Done!!!");
+    Serial.println("Done!");
     Serial.print("X : ");Serial.println(gyroXoffset);
     Serial.print("Y : ");Serial.println(gyroYoffset);
     Serial.print("Z : ");Serial.println(gyroZoffset);

@@ -2,7 +2,6 @@
 #define MPU6050_TOCKN_H
 
 #include "Arduino.h"
-#include "Wire.h"
 
 #define MPU6050_ADDR         0x68
 #define MPU6050_SMPLRT_DIV   0x19
@@ -13,6 +12,8 @@
 #define MPU6050_PWR_MGMT_1   0x6b
 #define MPU6050_TEMP_H       0x41
 #define MPU6050_TEMP_L       0x42
+
+class TwoWire;
 
 class MPU6050{
   public:

@@ -14,6 +14,22 @@
 #define MPU6050_TEMP_H       0x41
 #define MPU6050_TEMP_L       0x42
 
+#define MPU6050_GYRO_CONFIG_FS_SEL_BIT  4
+#define MPU6050_GYRO_CONFIG_FS_SEL_LENGTH 2
+
+#define MPU6050_ACCEL_CONFIG_FS_SEL_BIT 4
+#define MPU6050_ACCEL_CONFIG_FS_SEL_LENGTH 2
+
+#define MPU6050_2G_ACCEL_SENSITIVITY 16384
+#define MPU6050_4G_ACCEL_SENSITIVITY 8192
+#define MPU6050_8G_ACCEL_SENSITIVITY 4096
+#define MPU6050_16G_ACCEL_SENSITIVITY 2048
+
+#define MPU6050_250DS_GYRO_SENSITIVITY 131
+#define MPU6050_500DS_GYRO_SENSITIVITY 65.5
+#define MPU6050_1000DS_GYRO_SENSITIVITY 32.8
+#define MPU6050_2000DS_GYRO_SENSITIVITY 16.4
+
 class MPU6050{
   public:
 
@@ -66,14 +82,22 @@ class MPU6050{
   float getAngleY(){ return angleY; };
   float getAngleZ(){ return angleZ; };
 
+	void setGyroSensitivity (uint8_t range);
+	void setAccelSensitivity (uint8_t range);
+
   private:
 
   TwoWire *wire;
+
+	void writeBits (uint8_t regAddress, uint8_t startBit, uint8_t length, uint8_t data);
 
   int16_t rawAccX, rawAccY, rawAccZ, rawTemp,
   rawGyroX, rawGyroY, rawGyroZ;
 
   float gyroXoffset, gyroYoffset, gyroZoffset;
+
+	float accelSensitivity;
+	float gyroSensitivity;
 
   float temp, accX, accY, accZ, gyroX, gyroY, gyroZ;
 

@@ -67,14 +67,10 @@ void MPU6050::calcGyroOffsets(bool console, uint16_t delayBefore, uint16_t delay
       Serial.print(".");
     }
     wire->beginTransmission(MPU6050_ADDR);
-		wire->write(0x3B);
+		wire->write(0x43);
     wire->endTransmission(false);
-    wire->requestFrom((int)MPU6050_ADDR, 14, (int)true);
+    wire->requestFrom((int)MPU6050_ADDR, 6, (int)true);
 
-		wire->read() << 8 | wire->read();
-		wire->read() << 8 | wire->read();
-		wire->read() << 8 | wire->read();
-		wire->read() << 8 | wire->read();
     rx = wire->read() << 8 | wire->read();
     ry = wire->read() << 8 | wire->read();
     rz = wire->read() << 8 | wire->read();

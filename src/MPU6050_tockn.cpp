@@ -113,8 +113,8 @@ void MPU6050::update(){
   accY = ((float)rawAccY) / 16384.0;
   accZ = ((float)rawAccZ) / 16384.0;
 
-  angleAccX = atan2(accY, accZ + abs(accX)) * 360 / 2.0 / PI;
-  angleAccY = atan2(accX, accZ + abs(accY)) * 360 / -2.0 / PI;
+  angleAccX = atan2(accY, sqrt(accZ * accZ + accX * accX)) * 360 / 2.0 / PI;
+  angleAccY = atan2(accX, sqrt(accZ * accZ + accY * accY)) * 360 / -2.0 / PI;
 
   gyroX = ((float)rawGyroX) / 65.5;
   gyroY = ((float)rawGyroY) / 65.5;

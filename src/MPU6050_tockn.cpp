@@ -1,13 +1,15 @@
 #include "MPU6050_tockn.h"
 #include "Arduino.h"
 
-MPU6050::MPU6050(TwoWire &w){
+MPU6050::MPU6050(TwoWire &w, uint8_t i2cAddress):
+                    address(i2cAddress) {
   wire = &w;
   accCoef = 0.02f;
   gyroCoef = 0.98f;
 }
 
-MPU6050::MPU6050(TwoWire &w, float aC, float gC){
+MPU6050::MPU6050(TwoWire &w, float aC, float gC, uint8_t i2cAddress):
+                    address(i2cAddress) {
   wire = &w;
   accCoef = aC;
   gyroCoef = gC;
@@ -28,17 +30,17 @@ void MPU6050::begin(){
 }
 
 void MPU6050::writeMPU6050(byte reg, byte data){
-  wire->beginTransmission(MPU6050_ADDR);
+  wire->beginTransmission(address);
   wire->write(reg);
   wire->write(data);
   wire->endTransmission();
 }
 
 byte MPU6050::readMPU6050(byte reg) {
-  wire->beginTransmission(MPU6050_ADDR);
+  wire->beginTransmission(address);
   wire->write(reg);
   wire->endTransmission(true);
-  wire->requestFrom(MPU6050_ADDR, 1);
+  wire->requestFrom(address, 1);
   byte data =  wire->read();
   return data;
 }
@@ -64,10 +66,10 @@ void MPU6050::calcGyroOffsets(bool console, uint16_t delayBefore, uint16_t delay
     if(console && i % 1000 == 0){
       Serial.print(".");
     }
-    wire->beginTransmission(MPU6050_ADDR);
+    wire->beginTransmission(address);
     wire->write(0x43);
     wire->endTransmission(false);
-    wire->requestFrom((int)MPU6050_ADDR, 6);
+    wire->requestFrom((int)address, 6);
 
     rx = wire->read() << 8 | wire->read();
     ry = wire->read() << 8 | wire->read();
@@ -94,10 +96,10 @@ void MPU6050::calcGyroOffsets(bool console, uint16_t delayBefore, uint16_t delay
 }
 
 void MPU6050::update(){
-	wire->beginTransmission(MPU6050_ADDR);
+	wire->beginTransmission(address);
 	wire->write(0x3B);
 	wire->endTransmission(false);
-	wire->requestFrom((int)MPU6050_ADDR, 14);
+	wire->requestFrom((int)address, 14);
 
   rawAccX = wire->read() << 8 | wire->read();
   rawAccY = wire->read() << 8 | wire->read();

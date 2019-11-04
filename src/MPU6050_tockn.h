@@ -17,8 +17,8 @@
 class MPU6050{
   public:
 
-  MPU6050(TwoWire &w);
-  MPU6050(TwoWire &w, float aC, float gC);
+  MPU6050(TwoWire &w, uint8_t i2cAddress = MPU6050_ADDR);
+  MPU6050(TwoWire &w, float aC, float gC, uint8_t i2cAddress = MPU6050_ADDR);
 
   void begin();
 
@@ -86,6 +86,8 @@ class MPU6050{
   long preInterval;
 
   float accCoef, gyroCoef;
+
+  uint8_t address;
 };
 
 #endif

@@ -15,25 +15,31 @@ MPU6050::MPU6050(TwoWire &w, float aC, float gC, uint8_t i2cAddress):
   gyroCoef = gC;
 }
 
-void MPU6050::begin(){
-  writeMPU6050(MPU6050_SMPLRT_DIV, 0x00);
-  writeMPU6050(MPU6050_CONFIG, 0x00);
-  writeMPU6050(MPU6050_GYRO_CONFIG, 0x08);
-  writeMPU6050(MPU6050_ACCEL_CONFIG, 0x00);
-  writeMPU6050(MPU6050_PWR_MGMT_1, 0x01);
-  this->update();
+bool MPU6050::begin(){
+  byte result = 0;
+  result |= writeMPU6050(MPU6050_SMPLRT_DIV, 0x00);
+  result |= writeMPU6050(MPU6050_CONFIG, 0x00);
+  result |= writeMPU6050(MPU6050_GYRO_CONFIG, 0x08);
+  result |= writeMPU6050(MPU6050_ACCEL_CONFIG, 0x00);
+  result |= writeMPU6050(MPU6050_PWR_MGMT_1, 0x01);
+  if(result != 0) {
+    return false;
+  }
+
+  update();
   angleGyroX = 0;
   angleGyroY = 0;
   angleX = this->getAccAngleX();
   angleY = this->getAccAngleY();
   preInterval = millis();
+  return true;
 }
 
-void MPU6050::writeMPU6050(byte reg, byte data){
+byte MPU6050::writeMPU6050(byte reg, byte data){
   wire->beginTransmission(address);
   wire->write(reg);
   wire->write(data);
-  wire->endTransmission();
+  return wire->endTransmission();
 }
 
 byte MPU6050::readMPU6050(byte reg) {

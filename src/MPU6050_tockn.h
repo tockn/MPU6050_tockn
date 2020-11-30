@@ -14,17 +14,24 @@
 #define MPU6050_TEMP_H       0x41
 #define MPU6050_TEMP_L       0x42
 
-class MPU6050{
+class MPU6050 {
   public:
 
-  MPU6050(TwoWire &w);
-  MPU6050(TwoWire &w, float aC, float gC);
+  MPU6050(TwoWire &w, uint8_t i2cAddress = MPU6050_ADDR);
+  MPU6050(TwoWire &w, float aC, float gC, uint8_t i2cAddress = MPU6050_ADDR);
 
-  void begin();
+  /**
+   * Init the MPU6050, return true if success, otherwise false.
+   */
+  bool begin();
 
   void setGyroOffsets(float x, float y, float z);
 
-  void writeMPU6050(byte reg, byte data);
+  /**
+   * Return the result of the communication. 0 means success.
+   */
+  byte writeMPU6050(byte reg, byte data);
+
   byte readMPU6050(byte reg);
 
   int16_t getRawAccX(){ return rawAccX; };
@@ -86,6 +93,8 @@ class MPU6050{
   long preInterval;
 
   float accCoef, gyroCoef;
+
+  uint8_t address;
 };
 
 #endif

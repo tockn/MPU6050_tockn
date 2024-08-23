@@ -19,6 +19,9 @@ void MPU6050::begin(){
   writeMPU6050(MPU6050_GYRO_CONFIG, 0x08);
   writeMPU6050(MPU6050_ACCEL_CONFIG, 0x00);
   writeMPU6050(MPU6050_PWR_MGMT_1, 0x01);
+
+  delay(100);
+
   this->update();
   angleGyroX = 0;
   angleGyroY = 0;
